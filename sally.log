@@ -1,0 +1,24 @@
+02-09 14:54 root         INFO     INTERACTIVE MODE
+02-09 14:54 root         INFO     Attempting to run base.sal
+02-09 14:54 root         ERROR    'int' object has no attribute 'isspace'
+Traceback (most recent call last):
+  File "sally_interpreter.py", line 84, in run_file
+    parser = Parser(lexer)
+  File "C:\Users\jdurt\Desktop\interpreter\sally\sally_parser.py", line 55, in __init__
+    self.current_token = self.lexer.getNextToken()
+  File "C:\Users\jdurt\Desktop\interpreter\sally\sally_lexer.py", line 125, in getNextToken
+    f = self.skipWhitespace()
+  File "C:\Users\jdurt\Desktop\interpreter\sally\sally_lexer.py", line 80, in skipWhitespace
+    while (self.current_char is not None) and (self.current_char.isspace()):
+AttributeError: 'int' object has no attribute 'isspace'
+02-09 14:54 root         ERROR    INTERPRETER:run_file failed
+02-09 14:54 root         DEBUG    Command entry: exit()
+02-09 14:54 root         ERROR    "exit" is not a known word or integer
+02-09 14:54 root         DEBUG    Command entry: exit()
+02-09 14:54 root         ERROR    "exit" is not a known word or integer
+02-09 14:54 root         DEBUG    Command entry: exit
+02-09 14:54 root         ERROR    "exit" is not a known word or integer
+02-09 14:54 root         DEBUG    Command entry: quit
+02-09 14:54 root         ERROR    "quit" is not a known word or integer
+02-09 14:54 root         DEBUG    Command entry: quit!
+02-09 14:54 root         ERROR    "quit!" is not a known word or integer

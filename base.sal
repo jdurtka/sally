@@ -1,0 +1,111 @@
+(base library package for "Sally" toy language)
+
+: (str -- )         print       ,print drop         ;
+"loaded base.sal, type help for information" print cr
+
+
+(useful output functions)
+: ( -- )            star        42 emit             ;
+: ( -- )            space       32 emit             ;
+: ( n -- )          spaces      [space] swap times  ;
+
+
+(0 comparison operators)
+: (a -- cond)       0=          0 swap =            ;
+: (a -- cond)       0<          0 swap <            ;
+: (a -- cond)       0>          0 swap >            ;
+
+
+(boolean operators)
+: (cond -- !cond)   not         0=                  ;
+: ( -- 0)           false       0                   ;
+: ( -- -1)          true        -1                  ;
+: ( cond [b] -- )   if          [] ifelse           ;
+
+
+(numeric operators)
+: (n -- n*n)        sq          dup *               ;
+: (n -- -n)         neg         0 swap -            ;
+:                   inc         1 +                 ;
+:                   dec         1 -                 ;
+: (a b -- mod div)  /mod        2dup mod rot rot /  ;
+: (a b c -- b c a)  rot         2 roll              ;
+: (a -- abs(a) )    abs         dup 0> [neg] if ;
+
+
+(some handy aliases/shortcuts)
+:                   exec        ,exec drop                      ;
+:                   dump        .s                              ;
+:                   !           exec                            ;
+:                   ?           if                              ;
+
+(helper function for loading libraries and source files)
+: ("code" -- )      docode       unescape eval exec          ;
+: (filename -- )    run         ".sal" cat load drop docode  ;
+
+(destructive variants of by-default non-destructive built-in words)
+: (str -- )         len         ,len swap drop      ;
+: (str -- )			emit		,emit drop			;
+
+: help              cr
+                    "------------------------------------------------------------------------" print cr
+                    "------------------------------------------------------------------------" print cr
+                    "SALLY LANGUAGE REFERENCE:" print cr cr
+                    "NOTE: This is intentionally incomplete! The docs are more thorough ;)" print cr cr
+                    "------------------------------------------------------------------------" print cr
+                    "------------------------------------------------------------------------" print cr cr
+                    "bye            - type 'bye' to exit the interpreter" print cr
+                    "n              - for some integer n, pushes n to the stack" print cr
+                    "+ - * /        - the four integer arithmetic operations, postfix" print cr
+                    "       e.g. 5 2 - will pop 5 and 2 and push 3 onto the stack" print cr
+                    "a b mod        - a modulo b" print c
+                    "'str'          - pushes a string to the stack (may also use \" delimiters)" print cr
+                    "drop           - drops the top item (TOS) off the stack" print cr
+                    "n pick         - copy the nth item down to the top, n starting from 0" print cr
+                    "swap           - swaps the top two items (TOS and NOS) on the stack" print cr
+                    "over           - makes a copy of the NOS on top of the stack" print cr
+                    "n roll         - move the nth item down to the top, n starting from 0" print cr
+                    "rot            - move the third item on the stack to the top" print cr
+                    ".              - display the top item on the stack" print cr
+                    "print          - same as above, but converts it to a string first" print cr
+                    
+                    cr cr "--MORE--" print cr cr
+                    readline drop
+                    
+                    "readline       - wait for the user to enter some text, push to stack" print cr
+                    "true, false    - push boolean condition to stack" print cr
+                    "and, or        - logical and/or on two booleans on the stack" print cr
+                    "< > = <= >=    - arithmetic comparison operators pop two integers, push boolean" print cr
+                    ":name code;    - add a word called 'name' which evaluates to code at runtime" print cr
+                    "'name' forget   - forget a previously added word called 'name'" print cr
+                    "[code]         - pushes a block of code to the stack" print cr
+                    "eval           - parses a string on the stack and converts it to a block" print cr
+                    "exec           - executes a block on the stack" print cr
+                    "[b] n times    - executes a block n times" print cr
+                    "c [b] [e] if   - if c is true, execute b, else execute e" print cr
+                    "c [b] while    - repeatedly execute b as long as c is true" print cr
+                    "c [b] until    - repeatedly execute b as long as c is false" print cr
+                    "n [b] forloop  - execute b n times, each time pushing i=0..(n-1)" print cr cr
+                    "'str' load     - load a file spec'd by the string pushed to the stack" print cr
+                    
+                    cr cr "--MORE--" print cr cr
+                    readline drop
+                    
+                    "empty!         - empty the stack completely" print cr
+                    "empty?         - push -1 if the stack is empty, else push 0" print cr
+                    ".s             - non-destructively display stack contents" print cr
+                    ".dict          - display contents of the word dictionary (for debugging)" print cr
+                    
+                    " " print cr cr
+                    "------------------------------------------------------------------------" print cr ;
+
+(some examples of words which could easily be implemented using other words)
+(:                  dup         0 pick              ;)
+(:                  swap        1 roll              ;)
+(:                  emit        chr .               ;)
+(:                  ,print      str ,.              ;)
+(:                  empty!      empty? not [drop drop empty? not] while drop    ;)
+
+(some examples of common patterns which might benefit from abbreviation)
+(: (a b -- b)			sd			swap drop			;)
+(: ("a" "b" -- "ba"		sc			swap cat			;)

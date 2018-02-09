@@ -1,0 +1,46 @@
+(	James Durtka
+	Some examples of file I/O in "Sally"
+)
+
+"loaded fileops.sal, type fileops-help for help" print cr
+
+(example of reading a file)
+: (filename -- )		fread-ex		cr load "Filename: " print print cr ,len "Size: " print print cr	"Contents:" print cr cr "------------" print cr print cr	"------------" print	;
+
+(useful for arbitrarily zero-padding a string - num is the desired total length, MUST BE GREATER THAN OR EQUAL TO INITIAL LENGTH)
+: (str num -- paddedstr) zeropad		
+										swap ,len		(get the length of the string we're padding)
+										rot - abs		(get the difference: note that if original string is too long, this will FAIL)
+										"" swap			(start with an empty string to add zeroes to)
+										["0" cat]		(keep appending zeroes)
+										swap times		(do this as many times as needed)
+										swap cat		(append the original string to the padding)
+								;
+
+
+(example of writing a file: write every possible byte from x00 to xff to a file specified by the user)
+: (filename -- )		fwrite-ex		256 [
+												dup >hex				(copy the # and convert to hex)
+												2 zeropad				(zero pad)
+												"\x" swap cat swap		(add the \x)
+											] forloop					(do this 256 times from 0:255)
+											[cat] 255 times				(concatenate 255 times)
+											unescape					(convert the \xnn strings to characters)
+											swap store					(recover the desired filename and store to it)
+								;
+
+: fileops-help		"------------------------------------------------------------------------" print cr
+					"FILE OPERATIONS EXAMPLES:" print cr
+					"------------------------------------------------------------------------" print cr cr
+					"'filename' fread-ex   - Example of reading and displaying a file" print cr
+					"'filename' fwrite-ex  - Example of writing a binary file" print cr
+					"------------------------------------------------------------------------" print cr ;
+					
+: unload-fileops
+					"fileops-help" forget
+					"fwrite-ex" forget
+					"zeropad" forget
+					"fread-ex" forget
+					"Unloaded fileops.sal" print
+					"unload-fileops" forget
+				;

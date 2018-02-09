@@ -1,0 +1,59 @@
+(	James Durtka
+	Example of recursively computing the factorial function in "Sally"
+)
+
+"loaded factorial.sal, type factorial-help for help" print cr
+
+: (n -- n!)			factorial			dup 1 - dup rot rot dup [factorial *] [drop] ifelse swap drop;
+: (n -- )			factorial-display	factorial .;
+
+: factorial-help	"------------------------------------------------------------------------" print cr
+					"FACTORIAL:" print cr
+					"------------------------------------------------------------------------" print cr cr
+					"n factorial          - recursively computes n! (n < 37)" print cr
+					"n factorial-display  - shows all the factorials of all 1..n" print cr
+					"------------------------------------------------------------------------" print cr ;
+					
+
+: unload-factorial "factorial" forget "factorial-display" forget "factorial-help" forget "Unloaded factorial.sal" print "unload-factorial" forget;
+
+
+(note that due to the default Python call-stack limitation, this crashes for some N near 40 (+ or - 5))
+
+(example of the way the stack behaves for 5 factorial:
+ 5
+ 5 5 -copy
+ 5 4 -subtract 1
+ 5 4 4 -copy
+ 4 5 4 -roll twice
+ 4 5 4 4 -copy, if deletes the last item, recurse
+ 4 5 4 4 -copy, again!
+ 4 5 4 3 -subtract 1
+ 4 5 4 3 3 -copy
+ 4 5 3 4 3 -roll twice
+ 4 5 3 4 3 3 -copy, if deletes the last item, recurse
+ 4 5 3 4 3 3 -copy, again!
+ 4 5 3 4 3 2 -subtract 1
+ 4 5 3 4 3 2 2 -copy
+ 4 5 3 4 2 3 2 -roll twice
+ 4 5 3 4 2 3 2 2 -copy, if deletes the last item, recurse
+ 4 5 3 4 2 3 2 2 -copy, again!
+ 4 5 3 4 2 3 2 1 -subtract 1
+ 4 5 3 4 2 3 2 1 1 -copy
+ 4 5 3 4 2 3 1 2 1 -roll twice
+ 4 5 3 4 2 3 1 2 1 1 -copy, if deletes the last item, recurse
+ 4 5 3 4 2 3 1 2 1 1 -copy, again!
+ 4 5 3 4 2 3 1 2 1 0 -subtract 1
+ 4 5 3 4 2 3 1 2 1 0 0 -copy
+ 4 5 3 4 2 3 1 2 0 1 0 -roll twice
+ 4 5 3 4 2 3 1 2 0 1 0 0 -copy, if deletes the last item AND fails, dropping the first zero
+ 4 5 3 4 2 3 1 2 0 1 -swap-drop, deleting the zero
+ 4 5 3 4 2 3 1 2*1 -the first multiplication takes place
+ 4 5 3 4 2 3 2*1 -swap-drop, deleting the 1
+ 4 5 3 4 2 3*2*1 -the second multiplication takes place
+ 4 5 3 4 3*2*1 -swap-drop, deleting the 2
+ 4 5 3 4*3*2*1 -the third multiplication takes place
+ 4 5 4*3*2*1 -swap-drop, deleting the 3
+ 4 5*4*3*2*1 -the last multiplication takes place
+ 5*4*3*2*1 -swap-drop, deleting the 4, and exit because this is the last recursive step
+ )

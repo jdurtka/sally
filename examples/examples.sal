@@ -1,0 +1,35 @@
+(	James Durtka
+	Some simple example programs for "Sally"
+)
+
+"loaded examples.sal, type examples-help for help" print cr
+
+(fibonacci algorithm)
+: (n -- a b)		fibonacci				0 1 rot [rot rot 2dup + rot drop rot] forloop	;
+: (n -- )			fibonacci-display		[dup fibonacci . drop] forloop					;
+
+
+ 
+(sierpinski gasket tailored to your screen size!)
+: block "db" hex> chr print ;
+: (rows cols -- )	sierpinski	[] [2dup && [star] [space] ifelse] [cr] 2forloop			;
+: (rows cols -- )	block-sierp	[] [2dup && [block] [space] ifelse] [cr] 2forloop			;
+
+(gcd algorithm adapted from http://galileo.phys.virginia.edu/classes/551.jvn.fall01/primer.htm#struct)
+: (a b -- b a b)	tuck		swap over					;
+: (a b -- gcd)		gcd			?dup [tuck mod gcd] [] ifelse;
+
+: examples-help		"------------------------------------------------------------------------" print cr
+					"EXAMPLES:" print cr
+					"------------------------------------------------------------------------" print cr cr
+					"n fibonacci          - computes the nth fibonacci number (and precursor)" print cr
+					"n fibonacci-display  - shows all fibonacci numbers up to the nth" print cr
+					"a b gcd              - computes the GCD of two numbers" print cr
+					"rows cols sierpinski - displays sierpinski gasket" print cr cr
+					"------------------------------------------------------------------------" print cr ;
+
+(automatically load the factorial program)
+"examples/factorial" run
+"examples/fileops" run
+
+: unload-examples unload-factorial unload-fileops "examples-help" forget "gcd" forget "tuck" forget "sierpinski" forget "fibonacci-display" forget "fibonacci" forget "Unloaded examples.sal" print "unload-examples" forget;

@@ -1,0 +1,122 @@
+(	James Durtka
+	A BrainF* to Sally converter written in "Sally"
+)
+
+"loaded brainf2.sal, type brainf-help for help" print cr
+
+(This is a quick and dirty way of doing it. It probably isn't the best way, and it will fail for any
+moderately sized BF program. It's more a proof of concept than anything, and was helpful in testing
+different features of the "Sally" language.
+
+The approach is simply to convert everything to valid Sally words in one big block, then execute that
+block. The BF memory space is implemented by using both stacks; < and > are replaced with r> and >r.
+Everything is made safe by inserting a 0 when either stack is empty. Input via the BF command , is not
+implemented. Everything else should work, in theory, but again this approach is not really suitable
+for anything more complex than a standard Hello World program.
+
+To use, after running this file to define the word "bfexec" simply push the filename of the BF program
+to the stack and then run bfexec. Anything previously on the stack will be erased; the word will execute
+the entire conversion process and attempt to run the resulting code.
+)
+
+: bfexec 
+
+		(load the file, drop the name and unescape the contents for processing)
+		load drop unescape
+		
+		(initial state section)
+		,len >r					(find out how big our program is and break it into pieces)
+		"empty! 0 [" >r				(initial program)
+		
+		explode	drop				(break up the bf code into pieces)
+		
+		r> r> [					(begin while loop...)
+				dec >r			(decrement our counter and save it)
+				>r				(save the intermediate program for now)
+				
+				dup "+" =		(is the character...  "+" ?)
+				(yes +)
+				[
+					" empty? [ 1 ] [ inc ] ifelse "		(emit the code for +)
+				]
+				(not +)
+				[
+					dup "-" =	(is the character...  "-" ?)
+					(yes -)
+					[
+						" empty? [ -1 ] [ dec ] ifelse "
+					]
+					(not -)
+					[
+						dup "." =
+						(yes .)
+						[
+							" empty? [ 20 emit ] [ ,emit ] ifelse "
+						]
+						[
+							dup "[" =
+							(yes [)
+							[
+								" empty? [ 0 ] if [ "
+							] 
+							(not [)
+							[
+								dup "]" =
+								(yes ])
+								[
+									" ] while "
+								]
+								(not ])
+								[
+									dup ">" =
+									(yes >)
+									[
+										" empty? [ 0 >r ] [ >r ] ifelse \n"
+									] 
+									(not >)
+									[
+										dup "<" =
+										(yes <)
+										[
+											" r-empty? [ 0 ] [ r> ] ifelse \n"
+										]
+										(not recognized)
+										[
+											" "
+										] ifelse (<)
+									] ifelse (>)
+								] ifelse (])
+							] ifelse ([)
+						] ifelse (.)
+					] ifelse (-)
+				] ifelse (+)
+				
+				r> swap cat >r	(add it to our intermediate program)
+				
+				drop r>		(get rid of the character just parsed)
+				
+			r> ] while			(...end while loop)
+			
+		drop "] exec " cat			(add the end of the program)
+		
+		>r empty! r>			(cleanup the stack)
+		
+		docode		(run the thing!)
+		
+		;
+					
+: brainf-help		"------------------------------------------------------------------------" print cr
+					"BRAINF* TO SALLY CONVERTER:" print cr
+					"------------------------------------------------------------------------" print cr cr
+					"'filename.bf' bfexec  - convert a file containing BrainF* code" print cr
+					"                        into valid Sally code, then execute that" print cr
+					"                        code" print cr
+					" Note: does not support keyboard input!" print cr
+					"------------------------------------------------------------------------" print cr ;
+					
+: unload-brainf
+					"brainf-help" forget
+					"bfexec" forget
+					"Unloaded brainf.sal" print
+					"unload-brainf" forget
+				;

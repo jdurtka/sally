@@ -1,0 +1,23 @@
+(	Author
+	Module Description
+)
+
+"loaded XXXX.sal, type XXXX-help for help" print cr
+					
+					
+: XXXX-help			"------------------------------------------------------------------------" print cr
+					"MODULE DESCRIPTION:" print cr
+					"------------------------------------------------------------------------" print cr cr
+					"param word   - Example of applying a word to a param on the stack" print cr
+					"------------------------------------------------------------------------" print cr ;
+
+(note that this has limited reliability in that if multiple modules define the same word, we aren't guaranteed to unload the correct one here!)
+(the assumption is that everything would be done in reverse order from the way it was defined to begin with)
+: unload-XXXX
+					"XXXX-help" forget
+					
+					(unload other words defined in the module here)
+					
+					"Unloaded XXXX.sal" print
+					"unload-XXXX" forget
+				;
